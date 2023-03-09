@@ -6,5 +6,5 @@ export interface Email extends Document {
   readonly sender: string;
   readonly recipient: string;
   isRead: boolean;
-  readonly timestamp: Date;
+  readonly createdAt: Date;
 }

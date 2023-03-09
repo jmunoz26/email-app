@@ -6,6 +6,9 @@ export type EmailDocument = Email & Document;
 @Schema()
 export class Email {
   @Prop()
+  _id: string;
+
+  @Prop()
   subject: string;
 
   @Prop()
@@ -18,10 +21,10 @@ export class Email {
   recipient: string;
 
   @Prop({ default: false, mutable: true }) // set mutable option to true
-  read: boolean;
+  isRead: boolean;
 
   @Prop()
-  timestamp: Date;
+  createdAt: Date;
 }
 
 export const EmailSchema = SchemaFactory.createForClass(Email);
