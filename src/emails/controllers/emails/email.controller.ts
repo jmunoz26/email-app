@@ -7,25 +7,25 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { EmailService } from './email.service';
-import { EmailDto } from './dto/email.dto';
+import { EmailService } from '../../services/emails/email.service';
+import { CreateEmailDto } from '../../dto/CreateEmailDto.dto';
 
 @Controller('emails')
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
 
   @Get()
-  async findAll() {
-    return this.emailService.findAll();
+  async getAll() {
+    return this.emailService.getAll();
   }
 
   @Post()
-  async create(@Body() emailDto: EmailDto) {
+  async create(@Body() emailDto: CreateEmailDto) {
     return this.emailService.create(emailDto);
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() emailDto: EmailDto) {
+  async update(@Param('id') id: string, @Body() emailDto: CreateEmailDto) {
     return this.emailService.update(id, emailDto);
   }
 
