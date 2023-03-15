@@ -1,50 +1,49 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Email } from '../../interfaces/email.interface';
 import { CreateEmailDto } from '../../dto/CreateEmailDto.dto';
-import { UpdateEmailDto } from '../../dto/updateEmail.dto';
-import mongoose from 'mongoose';
+import { Email } from '../../../schemas/email.schema';
 
 @Injectable()
 export class EmailService {
   constructor(
     @InjectModel('Email') private readonly emailModel: Model<Email>,
   ) {}
-  async delete(id: string): Promise<void> {
-    await this.emailModel.findByIdAndDelete(id).exec();
-  }
-  async update(id: string, updateEmailDto: UpdateEmailDto): Promise<Email> {
-    const email = await this.emailModel.findById(id);
 
-    if (!email) {
-      throw new NotFoundException(`Email with ID ${id} not found`);
+  async findAll(): Promise<Email[]> {
+    return this.emailModel.find();
+  }
+
+  async findOne(id: string): Promise<Email | null> {
+    return this.emailModel.findById(id);
+  }
+
+  async update(
+    id: string,
+    updateEmailDto: CreateEmailDto,
+  ): Promise<Email | null> {
+    const existingEmail = await this.emailModel.findById(id);
+    if (!existingEmail) {
+      throw new Error(`Email with id ${id} not found`);
     }
-
-    email.isRead = updateEmailDto.isRead;
-    await email.save();
-
-    return email;
-  }
-  async create(email: CreateEmailDto): Promise<Email> {
-    const createdEmail = new this.emailModel({
-      ...email,
-      _id: new mongoose.Types.ObjectId(), // generamos un nuevo ObjectId para el email
-    });
-    const savedEmail = await createdEmail.save();
-
-    // // Emit a 'new-email' event to all connected clients
-    // this.socketServer.emit('new-email', savedEmail);
-
-    return savedEmail;
+    const updatedEmail = await this.emailModel.findByIdAndUpdate(
+      id,
+      updateEmailDto,
+      { new: true },
+    );
+    return updatedEmail;
   }
 
-  async getAll(): Promise<Email[]> {
-    return this.emailModel.find().exec();
+  async create(createEmailDto: CreateEmailDto): Promise<Email> {
+    const createdEmail = new this.emailModel(createEmailDto);
+    return createdEmail.save();
   }
 
-  // async getEmailById(id: string): Promise<EmailDto> {
-  //   const email = await this.emailModel.findById(id).exec();
-  //   return email;
-  // }
+  async delete(id: string): Promise<Email> {
+    const deletedEmail = await this.emailModel.findByIdAndDelete(id);
+    if (!deletedEmail) {
+      throw new NotFoundException(`Email with id ${id} not found`);
+    }
+    return deletedEmail;
+  }
 }

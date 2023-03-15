@@ -16,7 +16,7 @@ export class EmailController {
 
   @Get()
   async getAll() {
-    return this.emailService.getAll();
+    return this.emailService.findAll();
   }
 
   @Post()

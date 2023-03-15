@@ -6,19 +6,16 @@ export type EmailDocument = Email & Document;
 @Schema()
 export class Email {
   @Prop()
-  _id: string;
-
-  @Prop()
   subject: string;
 
   @Prop()
   body: string;
 
   @Prop()
-  sender: string;
+  from: string;
 
   @Prop()
-  recipient: string;
+  to: string;
 
   @Prop({ default: false, mutable: true }) // set mutable option to true
   isRead: boolean;
